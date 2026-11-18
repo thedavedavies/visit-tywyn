@@ -1,0 +1,7 @@
+name = "visit-tywyn-refresh-trigger"
+main = "worker.js"
+compatibility_date = "2026-08-01"
+workers_dev = false
+
+[triggers]
+crons = ["7,37 * * * *"]

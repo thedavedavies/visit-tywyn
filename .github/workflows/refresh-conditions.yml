@@ -33,6 +33,11 @@ on:
   schedule:
     - cron: '7,37 * * * *'
   workflow_dispatch:
+    inputs:
+      force:
+        description: Refetch every source, even ones that are still fresh
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -48,6 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
+          ref: ${{ github.ref }}
           ssh-key: ${{ secrets.CRON_DEPLOY_KEY }}
 
       - uses: actions/setup-node@v7
@@ -60,7 +66,7 @@ jobs:
       - run: npm run refresh:conditions
         env:
           # Manual runs always refetch, skipping the freshness check.
-          FORCE_REFRESH: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+          FORCE_REFRESH: ${{ inputs.force && '1' || '' }}
 
       # `!cancelled()` so this still runs when the refresh step exits
       # non-zero (snapshot past its TTL): the other source may have
