@@ -273,6 +273,63 @@ const heroEarlyHints = {
 	},
 };
 
+/**
+ * Fold `_headers` rules that repeat a URL pattern into one block. Pages
+ * applies every rule whose pattern matches and joins repeated headers,
+ * but a pattern written twice is not two rules: only its last block
+ * takes effect. font-early-hints and hero-early-hints both write a `/`
+ * block, so the home page was losing its font preloads. A repeated
+ * block's header lines move up into the first block with that pattern,
+ * in order; comments and blank lines stay where they are. Runs after
+ * every integration that writes `_headers`.
+ */
+/** @type {import('astro').AstroIntegration} */
+const mergeHeaderRules = {
+	name: 'merge-header-rules',
+	hooks: {
+		'astro:build:done': async ({ dir, logger }) => {
+			const file = new URL('_headers', dir);
+			let text;
+			try {
+				text = readFileSync(file, 'utf8');
+			} catch {
+				return;
+			}
+			/** @type {Map<string, string[]>} */
+			const blocks = new Map();
+			/** @type {(string | { pattern: string })[]} */
+			const layout = [];
+			/** @type {string[] | undefined} */
+			let current;
+			/** @type {string[]} */
+			const repeated = [];
+			for (const line of text.split('\n')) {
+				if (current && /^\s+\S/.test(line)) {
+					current.push(line);
+				} else if (/^[^\s#]/.test(line)) {
+					const pattern = line.trim();
+					current = blocks.get(pattern);
+					if (current) {
+						repeated.push(pattern);
+					} else {
+						current = [];
+						blocks.set(pattern, current);
+						layout.push({ pattern });
+					}
+				} else {
+					layout.push(line);
+				}
+			}
+			if (repeated.length === 0) return;
+			const merged = layout.flatMap((item) =>
+				typeof item === 'string' ? [item] : [item.pattern, ...(blocks.get(item.pattern) ?? [])],
+			);
+			writeFileSync(file, merged.join('\n'));
+			logger.info(`merge-header-rules: folded repeated ${repeated.join(', ')} into one block`);
+		},
+	},
+};
+
 /** @type {import('astro').AstroIntegration} */
 const markdownTwins = {
 	name: 'markdown-twins',
@@ -499,6 +556,7 @@ export default defineConfig({
 		sitemapUnderscoreAlias,
 		fontEarlyHints,
 		heroEarlyHints,
+		mergeHeaderRules,
 		markdownTwins,
 		pruneUnreferencedAssets,
 	],
