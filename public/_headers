@@ -17,6 +17,12 @@
 # before setting its own. After deploying changes here, verify with
 #   curl -sI https://visit-tywyn.co.uk/_astro/<any-asset>
 # and expect exactly ONE Cache-Control value.
+#
+# One exception: a pattern written twice is NOT two rules. Only its
+# last block takes effect, which silently dropped the home page's font
+# preloads when font-early-hints and hero-early-hints each wrote a `/`
+# block (Nov 2026). The build now folds repeated patterns into their
+# first block (merge-header-rules in astro.config.mjs).
 
 # Default headers for every response. The HTML cache is short so
 # editorial updates appear within minutes of a deploy.
