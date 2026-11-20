@@ -1,9 +1,9 @@
 name: Accessibility
 
 # Builds the site and runs axe-core (via puppeteer, in tools/a11y-scan.ts)
-# against a representative set of pages, failing on any WCAG A/AA
-# violation. Kept separate from the fast `test` job (type-check + build +
-# link check) so an a11y regression is its own clearly-named check.
+# against every built page, failing on any WCAG A/AA violation. Kept
+# separate from the fast `test` job (type-check + build + link check) so
+# an a11y regression is its own clearly-named check.
 #
 # Note: this gates on axe *violations* only. See tools/a11y-scan.ts for
 # why we run axe directly rather than via pa11y-ci.
