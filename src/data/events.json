@@ -339,15 +339,14 @@
 		},
 		{
 			"title": "Tywyn Late Night Christmas Shopping",
-			"summary": "Tywyn's independent High Street shops stay open into the evening for Christmas, with gifts, local makers and cafes open late. A good evening to pre-order Christmas food too.",
+			"summary": "Nearly 30 independent shops, cafes and businesses on the High Street open late, with festive food and drink specials, gift vouchers, and Christmas meat, veg and wreaths to pre-order.",
 			"start_date": "2026-11-26",
 			"start_time": "17:00",
 			"end_time": "19:00",
 			"location": "Tywyn High Street",
 			"locality": "Tywyn",
-			"tags": ["christmas"],
-			"external_url": "https://www.facebook.com/photo/?fbid=122287646882016096&set=pcb.122287648874016096",
-			"external_label": "Details on Facebook"
+			"internal_url": "/events/tywyn-late-night-christmas-shopping/",
+			"tags": ["christmas"]
 		},
 		{
 			"title": "Winter Willow Wreath Workshop",
