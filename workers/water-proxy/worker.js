@@ -7,7 +7,7 @@ export class UkFetcher {
 		const upstream = await fetch(`${UPSTREAM_ORIGIN}${pathname}`, {
 			headers: {
 				accept: 'application/json',
-				'user-agent': 'visit-tywyn-astro/1.0 (+https://visit-tywyn.co.uk)',
+				'user-agent': 'visit-tywyn/1.0 (+https://visit-tywyn.co.uk)',
 			},
 		});
 		console.log(`${pathname}: upstream ${upstream.status}`);

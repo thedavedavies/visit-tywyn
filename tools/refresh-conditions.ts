@@ -320,7 +320,7 @@ async function fetchJson<T>(url: string, init?: RequestInit): Promise<T> {
 			signal: controller.signal,
 			headers: {
 				...(init?.headers ?? {}),
-				'user-agent': 'visit-tywyn-astro/1.0 (+https://visit-tywyn.co.uk)',
+				'user-agent': 'visit-tywyn/1.0 (+https://visit-tywyn.co.uk)',
 				accept: 'application/json',
 			},
 		});
