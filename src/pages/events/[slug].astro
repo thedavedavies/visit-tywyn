@@ -8,6 +8,7 @@
  * data on top.
  */
 import { getCollection, render } from 'astro:content';
+import { Picture } from 'astro:assets';
 import PageLayout from '../../layouts/PageLayout.astro';
 import EntryHeader from '../../components/EntryHeader/EntryHeader.astro';
 import Icon from '../../components/Icon/Icon.astro';
@@ -48,7 +49,9 @@ const dateLabel = event.monthOnly
 		? LONG_DATE.format(new Date(event.startIso))
 		: `${LONG_DATE.format(new Date(event.startIso))} to ${LONG_DATE.format(new Date(event.endIso))}`;
 
+const poster = entry.data.poster;
 const heroUrl = entry.data.hero_image?.src.src;
+const imageUrl = heroUrl ?? poster?.src.src;
 
 const breadcrumbs = [
 	{ label: 'Home', href: '/' },
@@ -71,7 +74,7 @@ const links = [
 // "scheduled" event with past dates forever. The page itself stays
 // live (additive-only URL policy); only the markup is dropped.
 const jsonLd = [
-	...(event.isPast ? [] : eventNodes(event, { url: path, image: heroUrl ?? null })),
+	...(event.isPast ? [] : eventNodes(event, { url: path, image: imageUrl ?? null })),
 	// No breadcrumbList here: BaseLayout already auto-emits one from
 	// the `breadcrumbs` prop below; passing it again shipped the only
 	// duplicated BreadcrumbList on the site.
@@ -81,7 +84,7 @@ const jsonLd = [
 <PageLayout
 	title={entry.data.seo?.title ?? event.title}
 	description={entry.data.seo?.description ?? event.summary}
-	ogImage={entry.data.seo?.og_image ?? heroUrl}
+	ogImage={entry.data.seo?.og_image ?? imageUrl}
 	noindex={entry.data.seo?.noindex}
 	heroImage={entry.data.hero_image}
 	breadcrumbs={breadcrumbs}
@@ -96,7 +99,18 @@ const jsonLd = [
 		</p>
 	)}
 
-	<div class="entry-content">
+	<div class="entry-content event-body">
+		{poster && (
+			<Picture
+				class="event-poster"
+				src={poster.src}
+				alt={poster.alt}
+				formats={['avif', 'webp']}
+				width={640}
+				widths={[320, 640]}
+				sizes="(min-width: 768px) 280px, 256px"
+			/>
+		)}
 		<Content />
 	</div>
 
@@ -125,6 +139,29 @@ const jsonLd = [
 
 <style lang="scss">
 	@use '../../styles/abstracts/variables' as *;
+	@use '../../styles/abstracts/mixins' as *;
+
+	// Contain the floated poster so it never hangs into the links below.
+	.event-body {
+		display: flow-root;
+	}
+
+	// Portrait posters sit beside the text rather than filling the
+	// column. Floated right, so list bullets on the left are unaffected.
+	.event-body :global(.event-poster) {
+		display: block;
+		width: 100%;
+		max-width: 256px;
+		height: auto;
+		margin: 0 auto $space-5;
+		border-radius: $radius-md;
+
+		@include breakpoint(lg) {
+			float: right;
+			width: 280px;
+			margin: 0 0 $space-4 $space-5;
+		}
+	}
 
 	.event-location {
 		display: flex;

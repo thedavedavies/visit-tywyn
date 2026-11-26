@@ -196,6 +196,12 @@ const events = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			hero_image: imageBlock(image).optional(),
+			// The organiser's poster, shown small beside the page body. A
+			// markdown image would fill the whole content column, which
+			// for a portrait poster pushes the text a screen down. Also
+			// used as the social card and event image when there is no
+			// hero.
+			poster: imageBlock(image).optional(),
 			// Official listing / organiser site, shown in the "Find out
 			// more" links alongside any social profiles.
 			website: z.string().url().optional(),
