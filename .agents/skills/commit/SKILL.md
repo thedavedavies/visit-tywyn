@@ -7,8 +7,10 @@ description: Git commit, push and pipeline workflow for this repo, following its
 
 Single-developer repo, but `main` is protected and never worked on directly: every
 change starts as a feature branch off `main` and lands through a pull request. The
-remote is GitHub (`thedavedavies/visit-tywyn-astro`, driven with `gh`), and
-Cloudflare Pages rebuilds the site on every push to `main`.
+remote is GitHub (`thedavedavies/visit-tywyn`, driven with `gh`), and
+Cloudflare Pages rebuilds the site on every push to `main`. The Pages project kept
+the original repo name, `visit-tywyn-astro`, so its preview URLs are
+`*.visit-tywyn-astro.pages.dev` (the repo was renamed in November 2026).
 
 **Nothing broken reaches `main`.** A GitHub ruleset blocks direct pushes to `main`
 and holds a PR closed until `test`, `a11y` and `Socket Security: Project Report` are
@@ -177,7 +179,7 @@ background so the session stays responsive, and poll no faster than 20s:
 ```bash
 SHA=$(git rev-parse HEAD)
 while true; do
-  runs=$(gh api "repos/thedavedavies/visit-tywyn-astro/commits/$SHA/check-runs" \
+  runs=$(gh api "repos/thedavedavies/visit-tywyn/commits/$SHA/check-runs" \
     --jq '[.check_runs[] | {name, status, conclusion}]')
   echo "$runs" | jq -e 'length > 0 and all(.status == "completed")' >/dev/null \
     && { echo "$runs" | jq .; break; }
@@ -221,7 +223,7 @@ afterwards by curling a changed asset on the live site.
 ## Dependabot
 
 There is no `dependabot.yml`; what appears is security alerts (the banner in push
-output, the Security tab, or `gh api /repos/thedavedavies/visit-tywyn-astro/dependabot/alerts`)
+output, the Security tab, or `gh api /repos/thedavedavies/visit-tywyn/dependabot/alerts`)
 and the occasional dependabot PR. Handling an alert is ordinary `chore(deps)` work:
 bump within semver or upgrade the offending package, run the build, and take it
 through a branch and a PR in the style above. Merge a dependabot PR only after its required checks are green.
